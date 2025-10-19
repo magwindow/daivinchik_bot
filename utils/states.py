@@ -7,6 +7,6 @@ class Form(StatesGroup):
     city = State()
     gender = State()
     look_for = State()
-    about = State()
+    bio = State()
     photo = State()
     

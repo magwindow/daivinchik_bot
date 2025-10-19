@@ -6,16 +6,16 @@ from aiogram import Bot, Dispatcher
 load_dotenv()
 
 import handlers
-from data.database import Database
+from data.database import DataBase
 
 async def main():
     bot = Bot(token=os.getenv('BOT_TOKEN'))
     dp = Dispatcher()
     
-    db = Database("users_db.sqlite", "users")
-    # await db.create_table()
-    dp.include_routers(
-        handlers.start.router, 
+    db = DataBase()
+    dp.startup.register(db.create) # Создаем БД при запуске бота.
+    
+    dp.include_routers( 
         handlers.questionaire.router, 
         handlers.bot_messages.router
         )
