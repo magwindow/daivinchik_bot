@@ -75,6 +75,9 @@ async def form_about(message: Message, state: FSMContext):
 
 @router.message(Form.photo)
 async def form_photo(message: Message, state: FSMContext):
+    if message.photo is None:
+        await message.answer("Пришли мне фото")
+        return
     photo_file_id = message.photo[-1].file_id
     data = await state.get_data()
     await state.clear()
@@ -83,7 +86,5 @@ async def form_photo(message: Message, state: FSMContext):
     await message.answer_photo(photo_file_id, caption="\n".join(frm_text))
     
 
-@router.message(Form.look_for)
-async def form_photo(message: Message):
-    await message.answer("Отправь фото")
+
     
