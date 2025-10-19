@@ -17,7 +17,8 @@ class Database:
                 city VARCHAR(255),
                 gender INTEGER(1),
                 look_for INTEGER(1),
-                about TEXT(500)
+                about TEXT(500),
+                photo VARCHAR(255)
                 )"""
             await cursor.executescript(query)
             await db.commit()

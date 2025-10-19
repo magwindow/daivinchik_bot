@@ -9,5 +9,4 @@ router = Router()
 
 @router.message(CommandStart())
 async def start(message: Message, db: Database):
-    print(db.name)
     await message.answer('Выберете действие:', reply_markup=main)
