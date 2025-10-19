@@ -5,7 +5,7 @@ from data.database import DataBase
 
 router = Router()
 
-@router.message()
+@router.message(F.text)
 async def echo(message: Message, db: DataBase):
     if message.text.lower() == 'моя анкета':
         user = await db.get(message.from_user.id)

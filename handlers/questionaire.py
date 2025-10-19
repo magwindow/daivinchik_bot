@@ -4,19 +4,20 @@ from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 
 from keyboards.reply import main, rmk
-from keyboards.builders import form_btn
+from keyboards.builders import reply_builder
+
 from utils.states import Form
 from utils.city import check
+
 from data.database import DataBase
 
 router = Router()
 
 @router.message(CommandStart())
 async def my_form(message: Message, state: FSMContext, db: DataBase):
-    is_exists = await db.get(message.from_user.id, one=True)
+    is_exists = await db.get(message.from_user.id)
     if is_exists is not None:
-        data = await db.get(message.from_user.id)
-        user = data.one()
+        user = await db.get(message.from_user.id)
         pattern = {
             "photo": user.photo,
             "caption": f"{user.name} {user.age}, {user.city}\n{user.bio}"
@@ -24,7 +25,7 @@ async def my_form(message: Message, state: FSMContext, db: DataBase):
         await message.answer_photo(**pattern, reply_markup=main)
     else:
         await state.set_state(Form.name)
-        await message.answer("Отлично, введи своё имя", reply_markup=form_btn(message.from_user.first_name))
+        await message.answer("Отлично, введи своё имя", reply_markup=reply_builder(message.from_user.first_name))
     
 
 @router.message(Form.name)
@@ -49,7 +50,7 @@ async def form_city(message: Message, state: FSMContext):
     if await check(message.text):
         await state.update_data(city=message.text)
         await state.set_state(Form.gender)
-        await message.answer("Теперь давай определимся с полом", reply_markup=form_btn(["👨🏻Парень", "👩🏻Девушка"]))
+        await message.answer("Теперь давай определимся с полом", reply_markup=reply_builder(["👨🏻Парень", "👩🏻Девушка"]))
     else:
         await message.answer("Попробуй ещё раз")
         
@@ -58,7 +59,7 @@ async def form_city(message: Message, state: FSMContext):
 async def form_gender(message: Message, state: FSMContext):
     await state.update_data(gender=message.text)
     await state.set_state(Form.look_for)
-    await message.answer("Кого будем искать?", reply_markup=form_btn(["👨🏻Парней", "👩🏻Девушек", "Мне все равно"]))
+    await message.answer("Кого будем искать?", reply_markup=reply_builder(["👨🏻Парней", "👩🏻Девушек", "Мне все равно"]))
     
 
 @router.message(Form.gender)
